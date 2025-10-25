@@ -1,3 +1,17 @@
+# Expense Tracker (Vite Version)
+
+** Migration Note:** This project was migrated to Next.js in Week 6.
+See the Next.js version: [expense-tracker-next](https://github.com/your-username/expense-tracker-next)
+
+React expense tracking application built with Vite, TypeScript, and Tailwind CSS (Weeks 2-5).
+
+**Tech Stack:** Vite, React, TypeScript, Tailwind CSS
+
+**Migration Journey:**
+- Weeks 2-5: Built with Vite + React (this version)
+- Week 6: Migrated to Next.js for production features
+- Week 7: Deployed with CI/CD pipeline
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

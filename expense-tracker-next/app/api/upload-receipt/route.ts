@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, BUCKET_NAME } from '@/lib/s3';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 /**
  * POST /api/upload-receipt
@@ -61,11 +63,29 @@ export async function POST(request: NextRequest) {
       ContentType: file.type,  // Preserve file type (e.g., image/png)
     });
 
-    // 7. Upload file to S3
-    await s3Client.send(command);
-
-    // 8. Build file URL (LocalStack format in development)
-    const fileUrl = `http://localhost:4566/${BUCKET_NAME}/${filename}`;
+    // 7. Upload file to S3 (preferred)
+    let fileUrl: string;
+    try {
+      await s3Client.send(command);
+      // 8. Build file URL (LocalStack format in development)
+      fileUrl = `http://localhost:4566/${BUCKET_NAME}/${filename}`;
+    } catch (s3Error) {
+      // If S3/LocalStack isn't available, fall back to writing the file
+      // into the local public/uploads folder so the app can work offline.
+      try {
+        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+        await fs.mkdir(uploadsDir, { recursive: true });
+        const filePath = path.join(uploadsDir, filename);
+        await fs.writeFile(filePath, buffer);
+        // Use a relative URL so it works in dev and prod static serving
+        fileUrl = `/uploads/${filename}`;
+        console.warn('S3 upload failed; saved receipt to', filePath);
+      } catch (fsError) {
+        // If fallback also fails, rethrow original S3 error
+        console.error('Failed to save receipt to local uploads:', fsError);
+        throw s3Error;
+      }
+    }
 
     // 9. Return success response with file details
     return NextResponse.json({

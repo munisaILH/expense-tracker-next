@@ -3,7 +3,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Header from '@/components/Header/Header'
+import ExpenseSummary from '@/components/ExpenseSummary/ExpenseSummary'
+import ExpenseForm from '@/components/ExpenseForm/ExpenseForm'
 import ExpenseCard from '@/components/ExpenseCard/ExpenseCard'
+import ExpenseList from '@/components/ExpenseList/ExpenseList'
 import type { ExpenseCategory } from '@/components/ExpenseCard/ExpenseCard';
 
 interface Expense {
@@ -12,6 +16,7 @@ interface Expense {
   amount: number;
   category: ExpenseCategory;
   date: string;
+  receiptUrl?: string;  // NEW: Optional receipt URL
 }
 
 export default function ExpensesPage() {
